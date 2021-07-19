@@ -17,9 +17,24 @@ else {
 // @ts-ignore
 import { getCreateNotionDBBody, getDataFromNotionObject, getNotionData, getNotionQueryFilterFromWhere, readNotionDBIds, writeNotionDBIds } from './utils'
 
+const defaultBaseUrl = 'https://api.notion.com'
 
-const getNotionDBAdapter = (notionDBPageId: string, entities: any, notionSecret: string) => {
-  const notion = new Client({ auth: notionSecret })
+
+const getNotionDBAdapter = ({
+  notionDBPageId,
+  entities,
+  notionSecret,
+  baseUrl = defaultBaseUrl
+}: {
+  notionDBPageId: string,
+  entities: any,
+  notionSecret: string,
+  baseUrl: string
+}) => {
+  const notion = new Client({
+    auth: notionSecret,
+    baseUrl,
+  })
 
   const notionDBIds = readNotionDBIds()
 
@@ -27,7 +42,7 @@ const getNotionDBAdapter = (notionDBPageId: string, entities: any, notionSecret:
 
     // console.log({ title, body: inspect(body, false, 5) })
 
-    const response = await fetch2('https://api.notion.com/v1/databases/', {
+    const response = await fetch2(baseUrl + '/v1/databases/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${notionSecret}`,
