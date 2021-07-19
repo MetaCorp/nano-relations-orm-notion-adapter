@@ -1,0 +1,20 @@
+{
+  "name": "nano-relations-orm-notion-adapter",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": "https://github.com/MetaCorp/nano-relations-orm-notion-adapter.git",
+  "author": "Léopold Szabatura <l.szabatura@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@notionhq/client": "^0.2.2",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  }
+}
