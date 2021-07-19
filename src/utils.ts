@@ -1,7 +1,11 @@
 
 let fs
+
+export const isNode = () => typeof window === 'undefined'
+
+
 // @ts-ignore
-if (typeof process === 'object' || typeof window === 'undefined') {
+if (isNode()) {
   // @ts-ignore
   fs = require('fs')
 }
@@ -140,7 +144,7 @@ const notionDBIds = 'notionDBIds'
 export const writeNotionDBIds = (notionDBIds) => {
   const notionDBIdsData = JSON.stringify(notionDBIds, null, 2)
   // @ts-ignore
-  if (typeof process === 'object' || typeof window === 'undefined') {
+  if (isNode()) {
     fs.writeFileSync(notionDBIdsPath, notionDBIdsData)
   }
   else {
@@ -150,7 +154,7 @@ export const writeNotionDBIds = (notionDBIds) => {
 
 export const readNotionDBIds = () => {
   // @ts-ignore
-  if (typeof process === 'object' || typeof window === 'undefined') {
+  if (isNode()) {
     if (!fs.existsSync(notionDBIdsPath)) return {}
     
     const notionDBIdsData = fs.readFileSync(notionDBIdsPath)

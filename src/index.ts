@@ -2,11 +2,12 @@
 // import { inspect } from 'util'
 // @ts-ignore
 import { Client } from '@notionhq/client'
+import { getCreateNotionDBBody, getDataFromNotionObject, getNotionData, getNotionQueryFilterFromWhere, isNode, readNotionDBIds, writeNotionDBIds } from './utils'
 
 let fetch2
 
-// @ts-ignore
-if (typeof process === 'object' || typeof window === 'undefined') {
+
+if (isNode()) {
   // @ts-ignore
   fetch2 = require('node-fetch')
 }
@@ -15,7 +16,6 @@ else {
 }
 
 // @ts-ignore
-import { getCreateNotionDBBody, getDataFromNotionObject, getNotionData, getNotionQueryFilterFromWhere, readNotionDBIds, writeNotionDBIds } from './utils'
 
 const defaultBaseUrl = 'https://api.notion.com'
 
