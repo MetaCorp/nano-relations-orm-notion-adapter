@@ -163,6 +163,8 @@ export const readNotionDBIds = () => {
   }
   else {
     const notionDBIdsData = localStorage.getItem(notionDBIds)
+
+    if (notionDBIdsData === null) return {}
     // @ts-ignore
     return JSON.parse(notionDBIdsData)
   }
