@@ -139,7 +139,7 @@ export const getNotionQueryFilterFromWhere = <T>(where: any) => {
 }
 
 const notionDBIdsPath = './data/notionDBIds.json'
-const notionDBIds = 'notionDBIds'
+const notionDBIdsLocalStorage = 'notionDBIds'
 
 export const writeNotionDBIds = (notionDBIds) => {
   const notionDBIdsData = JSON.stringify(notionDBIds, null, 2)
@@ -148,7 +148,7 @@ export const writeNotionDBIds = (notionDBIds) => {
     fs.writeFileSync(notionDBIdsPath, notionDBIdsData)
   }
   else {
-    localStorage.setItem(notionDBIds, notionDBIdsData)
+    localStorage.setItem(notionDBIdsLocalStorage, notionDBIdsData)
   }
 }
 
@@ -162,7 +162,7 @@ export const readNotionDBIds = () => {
     return JSON.parse(notionDBIdsData)
   }
   else {
-    const notionDBIdsData = localStorage.getItem(notionDBIds)
+    const notionDBIdsData = localStorage.getItem(notionDBIdsLocalStorage)
 
     if (notionDBIdsData === null) return {}
     // @ts-ignore
