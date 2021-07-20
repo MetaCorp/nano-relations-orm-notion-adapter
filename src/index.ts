@@ -1,7 +1,7 @@
 
-// import { inspect } from 'util'
 // @ts-ignore
 import { Client } from '@notionhq/client'
+// import { inspect } from 'util'
 import { getCreateNotionDBBody, getDataFromNotionObject, getNotionData, getNotionQueryFilterFromWhere, isNode, readNotionDBIds, writeNotionDBIds } from './utils'
 
 let fetch2
@@ -29,7 +29,7 @@ const getNotionDBAdapter = ({
   notionDBPageId: string,
   entities: any,
   notionSecret: string,
-  baseUrl: string
+  baseUrl?: string
 }) => {
   const notion = new Client({
     auth: notionSecret,
@@ -91,6 +91,8 @@ const getNotionDBAdapter = ({
 
   const nativeInsert = async (entityName: string, data: any): Promise<any> => {
 
+    console.log('nativeInsert :', { entityName, data })
+
     if (notionDBIds[entityName] === undefined) {
       const notionDBBody = getCreateNotionDBBody(notionDBPageId, entityName, entities[entityName].primaryKey, data)
       notionDBIds[entityName] = await createTable(notionDBBody)
@@ -107,10 +109,36 @@ const getNotionDBAdapter = ({
     })
   }
 
+  const nativeUpdate = async (entityName: string, where: any, data: any): Promise<any> => {
+
+    console.log('nativeUpdate :', { entityName, where, data })
+
+    const notionData = getNotionData(data, entities[entityName].primaryKey)
+
+    // TODO : is more optimize in term of performance to save the pageId in the notionDbTable
+    const response = await notion.databases.query({
+      database_id: notionDBIds[entityName],
+      // @ts-ignore
+      filter: getNotionQueryFilterFromWhere(where)
+    })
+
+    if (response.results === undefined || response.results.length === 0) {
+      console.log(`${entityName} Not Found: `, { where, data })
+      return null
+    }
+
+    return notion.pages.update({
+      page_id: response.results[0].id,
+      properties: notionData,
+      archived: false,
+    })
+  }
+
   return {
     find,
     findOne,
-    nativeInsert
+    nativeInsert,
+    nativeUpdate
   }
 }
 

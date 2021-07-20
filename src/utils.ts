@@ -129,6 +129,7 @@ export const getDataFromNotionObject = <T>(notionObject: any): T => {
 
 // TODO : type the return of the function
 // TODO map several where properties, custom equals, contains, starts_with, ...
+// TODO : handle more types
 export const getNotionQueryFilterFromWhere = <T>(where: any) => {
   return {
     property: Object.keys(where)[0],
