@@ -102,16 +102,20 @@ const getValueFromNotionProperty = (property: any) => {
   
   // console.log({ property })
   
+  const element = property[property.type][0]
+
   // if date, interprets with mikroOrm Element, handle start/end
   if (property.type === 'date') {
     return new Date(property.date.start)
   }
-  else {// rich_text or title
-    return property[property.type][0]?.plain_text[0] === '[' && property[property.type][0]?.plain_text.endsWith(']') ||
-    property[property.type][0]?.plain_text[0] === '{' && property[property.type][0]?.plain_text.endsWith('}') ?
-    JSON.parse(property[property.type][0]?.plain_text) :
+  else if (property.type === 'checkbox') {
+    return property.checkbox
+  } else {// rich_text or title
+    return element?.plain_text[0] === '[' && element?.plain_text.endsWith(']') ||
+    element?.plain_text[0] === '{' && element?.plain_text.endsWith('}') ?
+    JSON.parse(element?.plain_text) :
     property.type === 'number' ? property.number :
-    property[property.type][0]?.plain_text
+    element?.plain_text
   }
 }
 
