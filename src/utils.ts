@@ -16,11 +16,17 @@ const getNotionContent = (type: string, value: any) => {
   return type === 'rich_text' && Array.isArray(value) ? JSON.stringify(value) : value
 }
 
+const getType = (value: any) => {
+  let type: string[] | string = Object.prototype.toString.call(value).split(' ')
+  type = type[1].slice(0, type[1].length - 1).toLowerCase()
+
+  return type
+}
+
 // TODO : handle better Type recognition
 const getNotionType = (value: any) => {
 
-  let type: string[] | string = Object.prototype.toString.call(value).split(' ')
-  type = type[1].slice(0, type[1].length - 1).toLowerCase()
+  let type = getType(value)
   
   if (type === 'object') {
     type = value.constructor.name
@@ -134,12 +140,23 @@ export const getDataFromNotionObject = <T>(notionObject: any): T => {
 // TODO : type the return of the function
 // TODO map several where properties, custom equals, contains, starts_with, ...
 // TODO : handle more types
-export const getNotionQueryFilterFromWhere = <T>(where: any) => {
-  return {
-    property: Object.keys(where)[0],
-    text: {
-      equals: Object.values(where)[0]
-    },
+export const getNotionQueryFilterFromWhere = (where: any) => {
+  const type = getType(Object.values(where)[0])
+
+  if (type === 'boolean') {
+    return {
+      property: Object.keys(where)[0],
+      checkbox: {
+        equals: Object.values(where)[0]
+      },
+    }
+  } else {
+    return {
+      property: Object.keys(where)[0],
+      text: {
+        equals: Object.values(where)[0]
+      },
+    }
   }
 }
 
@@ -212,8 +229,7 @@ export const getCreateNotionDBBody = (notionDBPageId: string, title: string, pri
   const properties = {}
 
   for (const [key, value] of Object.entries(data)) {
-    let type: string[] | string = Object.prototype.toString.call(value).split(' ')
-    type = type[1].slice(0, type[1].length - 1).toLowerCase()
+    let type = getType(value)
 
     // console.log({ type, key, value })
     // @ts-ignore
