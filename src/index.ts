@@ -59,7 +59,13 @@ const getNotionDBAdapter = ({
     return resData.id
   }
 
-  const find = async <T>(entityName: string, where: any, orderBy?: any, limit?: number, offset?: number): Promise<T[]> => {
+  const find = async <T>(entityName: string, where: any, orderBy?: any, limit?: number, offset?: number): Promise<T[] | null> => {
+
+    if (notionDBIds[entityName] === undefined) {
+      console.log('Warning : No DBId for ' + entityName)
+      return null
+    }
+
     const response = await notion.databases.query({
       database_id: notionDBIds[entityName],
       // @ts-ignore
@@ -73,6 +79,12 @@ const getNotionDBAdapter = ({
   }
 
   const findOne = async <T>(entityName: string, where: any | string, options?: any): Promise<T | null> => {
+
+    if (notionDBIds[entityName] === undefined) {
+      console.log('Warning : No DBId for ' + entityName)
+      return null
+    }
+    
     const response = await notion.databases.query({
       database_id: notionDBIds[entityName],
       // @ts-ignore
@@ -91,7 +103,7 @@ const getNotionDBAdapter = ({
 
   const nativeInsert = async (entityName: string, data: any): Promise<any> => {
 
-    console.log('nativeInsert :', { entityName, data })
+    // console.log('nativeInsert :', { entityName, data })
 
     if (notionDBIds[entityName] === undefined) {
       const notionDBBody = getCreateNotionDBBody(notionDBPageId, entityName, entities[entityName].primaryKey, data)
@@ -111,7 +123,7 @@ const getNotionDBAdapter = ({
 
   const nativeUpdate = async (entityName: string, where: any, data: any): Promise<any> => {
 
-    console.log('nativeUpdate :', { entityName, where, data })
+    // console.log('nativeUpdate :', { entityName, where, data })
 
     const notionData = getNotionData(data, entities[entityName].primaryKey)
 
